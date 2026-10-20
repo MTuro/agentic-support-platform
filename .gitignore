@@ -1,0 +1,48 @@
+# Python environments and generated files
+.venv*/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+
+# Test, lint and type-check caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+coverage/
+
+# Local configuration and secrets; keep shareable templates
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Local vector indexes and runtime data; keep synthetic data/ fixtures
+.data/
+*.log
+
+# TypeScript, Angular and browser test output
+node_modules/
+dist/
+.angular/
+.eslintcache
+*.tsbuildinfo
+test-results/
+playwright-report/
+blob-report/
+
+# OS and editor temporary files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+CODEX_AI_CUSTOMER_SUPPORT_PLAN.md

@@ -1,0 +1,4 @@
+[
+  {"id":"TKT-1001","status":"in_progress","summary":"Synthetic workspace export investigation"},
+  {"id":"TKT-1002","status":"resolved","summary":"Synthetic invoice download issue resolved"}
+]
