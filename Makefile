@@ -27,3 +27,32 @@ agent:
 
 smoke-agent:
 	$(PYTHON) tests/smoke_agent.py
+
+# M2 requires Node 22/24 and a real PostgreSQL DATABASE_URL.
+.PHONY: api-setup api-build api-test api-lint api-typecheck api-migrate api-seed api smoke-api
+api-setup:
+	npm --prefix apps/api ci
+
+api-build:
+	npm --prefix apps/api run build
+
+api-test:
+	npm --prefix apps/api test
+
+api-lint:
+	npm --prefix apps/api run lint
+
+api-typecheck:
+	npm --prefix apps/api run typecheck
+
+api-migrate:
+	npm --prefix apps/api run migrate
+
+api-seed:
+	npm --prefix apps/api run seed
+
+api:
+	npm --prefix apps/api start
+
+smoke-api:
+	npm --prefix apps/api run smoke

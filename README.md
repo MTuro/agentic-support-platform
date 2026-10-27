@@ -1,18 +1,20 @@
 # OrbitDesk support platform
 
 Implementation of [the supplied plan](CODEX_AI_CUSTOMER_SUPPORT_PLAN.md), using
-synthetic SaaS support content. M0 and M1 are complete: 41 tests and nine
-subtests pass, along with lint, type checking and six real Ollama/HTTP smoke
-cases (zero failures). M2–M6 remain pending.
+synthetic SaaS support content. M0–M2 are complete. The LoopBack API persists
+conversations and escalations in PostgreSQL, authorizes customers and operators,
+and calls the Python agent for cited RAG and owned tickets. Validation: 43 Python
+tests plus nine subtests, 12 API tests, lint/type checks, six M1 and four M2 real
+HTTP smoke cases, and persistence after API restart. M3–M6 remain pending.
 
 [Architecture and contracts](docs/architecture.md) · [Decisions](docs/decisions.md) ·
-[Checklist](docs/roadmap.md)
+[Checklist](docs/roadmap.md) · [M2 API setup and contracts](docs/m2.md)
 
 The M1 service routes between versioned knowledge retrieval, synthetic ticket
 status, and an explicit escalation decision. Chroma stores vector chunks; Ollama
 provides embeddings and selects verbatim evidence. Citation metadata comes from
 the server. There are no model/vector fallback mocks in the production path.
-Escalation is a response flag until the durable human queue is implemented in M2.
+The public M2 API persists escalation decisions in a durable human queue.
 
 ## Setup on a network-enabled local host
 
@@ -58,9 +60,9 @@ make smoke-agent
 
 The smoke command makes real authenticated HTTP requests for FAQ citations,
 ticket status, uncertainty, prompt injection and human escalation. It reports
-actual case results and latency, and exits nonzero if any case fails. No scores
-are claimed until it has run. `/docs` and `/openapi.json` describe the agent's
-implemented contract; the LoopBack public API is only designed at this stage.
+actual case results and latency, and exits nonzero if any case fails. The recorded M1 acceptance run passed all six cases. `/docs` and `/openapi.json` describe the agent's
+implemented contract. The public LoopBack contract is in
+[apps/api/openapi.json](apps/api/openapi.json) and its `/openapi.json` endpoint.
 
 Try a request without putting a credential into the source tree:
 
@@ -72,7 +74,7 @@ curl --fail-with-body http://127.0.0.1:8001/agent/respond \
 ```
 
 Use `TKT-1001` for a synthetic ticket. The internal service must remain loopback
-only until M2 adds customer identity and ticket ownership. It uses a shared
+only. M2 adds customer identity and ticket ownership at the public API. It uses a shared
 service token, not customer authentication. Set an unused `CHROMA_DIR` if changing
 embedding models, then ingest again. Ingestion scans only reviewed Markdown/PDF
 files, upserts changed sources and removes deleted ones. Emptying the configured
@@ -105,9 +107,8 @@ semantic recall for auditable evidence; quote matching alone does not establish
 answer correctness. Fixed-size chunks may split sentences. Curated documents and
 the synthetic evaluation set are small, English-only examples. Injection filters
 are deliberately limited and are not a substitute for tool permissions and data
-authorization. CPU model latency and distance thresholds still need measurement.
+authorization. Observed CPU FAQ latency was 13–35 seconds; distance thresholds still need broader evaluation.
 
-Conversation persistence, ownership checks, durable escalation, LoopBack,
-PostgreSQL, Angular, Kafka, Airflow, Prometheus/Grafana, Compose, Kubernetes,
+Angular, Kafka, Airflow, Prometheus/Grafana, Compose, Kubernetes,
 CI/CD, screenshots and the full end-to-end portfolio demo are pending milestones.
 No IBM watsonx Orchestrate integration or cluster deployment is claimed.

@@ -1,0 +1,45 @@
+{
+  "name": "@orbitdesk/api",
+  "version": "0.2.0",
+  "private": true,
+  "engines": {
+    "node": "22 || 24"
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src test scripts",
+    "test": "npm run build && node --test --test-concurrency=1 dist/test/*.test.js",
+    "start": "node dist/src/main.js",
+    "migrate": "npm run build && node dist/src/migrate.js",
+    "seed": "npm run build && node dist/src/seed.js",
+    "openapi": "npm run build && node dist/src/openapi.js",
+    "smoke": "npm run build && node dist/scripts/smoke.js",
+    "db:local": "node scripts/local-postgres.mjs",
+    "demo:env": "node scripts/demo-env.mjs"
+  },
+  "dependencies": {
+    "@loopback/core": "^7.0.15",
+    "@loopback/rest": "^16.0.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "pg": "^8.23.1"
+  },
+  "devDependencies": {
+    "@apidevtools/swagger-parser": "^13.1.0",
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.5",
+    "@types/pg": "^8.23.1",
+    "embedded-postgres": "^18.4.0-beta.17",
+    "eslint": "^10.13.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1"
+  },
+  "overrides": {
+    "undici": "^6.29.1",
+    "@fastify/busboy": "^3.2.2"
+  },
+  "allowScripts": {
+    "@embedded-postgres/linux-x64": true
+  }
+}

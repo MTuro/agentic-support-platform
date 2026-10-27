@@ -33,12 +33,12 @@ no mock final demo path; no paid services or cloud provisioning.
 
 ## M2 — LoopBack and PostgreSQL
 
-- [ ] Inspect M1 contracts; add `apps/api` strict TypeScript LoopBack service and
+- [x] Inspect M1 contracts; add `apps/api` strict TypeScript LoopBack service and
   versioned migrations for the schema in architecture.md.
-- [ ] Write integration tests for create/send/read, invalid inputs, ownership,
+- [x] Write integration tests for create/send/read, invalid inputs, ownership,
   operator auth, agent outage, and retry idempotency; implement routes, storage,
   ticket ownership lookup, agent client, and durable escalations.
-- [ ] Run API lint/typecheck/tests and real PostgreSQL + Python integration tests.
+- [x] Run API lint/typecheck/tests and real PostgreSQL + Python integration tests.
   Export and validate OpenAPI; proceed only with the full conversation flow passing.
 
 ## M3 — Angular
