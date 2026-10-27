@@ -1,7 +1,7 @@
 # OrbitDesk support platform
 
-Implementation of [the supplied plan](CODEX_AI_CUSTOMER_SUPPORT_PLAN.md), using
-synthetic SaaS support content. M0–M2 are complete. The LoopBack API persists
+Conversational support platform using synthetic SaaS content, following the
+[architecture](docs/architecture.md) and [milestone checklist](docs/roadmap.md). M0–M2 are complete. The LoopBack API persists
 conversations and escalations in PostgreSQL, authorizes customers and operators,
 and calls the Python agent for cited RAG and owned tickets. Validation: 43 Python
 tests plus nine subtests, 12 API tests, lint/type checks, six M1 and four M2 real

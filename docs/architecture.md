@@ -1,8 +1,8 @@
 # Architecture
 
-The implementation follows `CODEX_AI_CUSTOMER_SUPPORT_PLAN.md`. This is a new
-repository: discovery found only that plan, no source, tests, dependency manifests,
-commits, or reusable Agentic RAG MCP modules. All product data is synthetic.
+The implementation follows the [milestone checklist](roadmap.md). Initial
+discovery found only a local implementation plan, with no source, tests, dependency
+manifests, commits, or reusable Agentic RAG MCP modules. All product data is synthetic.
 
 ## Boundaries
 
