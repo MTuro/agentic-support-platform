@@ -69,6 +69,38 @@ class ApiTests(unittest.TestCase):
             else:
                 self.assertEqual(body["ticket"]["status"], "open")
 
+    def test_explicit_ticket_context_replaces_fixture_and_is_request_scoped(self):
+        for context, route in [
+            ([], "escalation"),
+            (
+                [{"id": "TKT-1001", "status": "resolved", "summary": "Authorized DB record"}],
+                "ticket",
+            ),
+        ]:
+            result = self.client.post(
+                "/agent/respond",
+                json={"message": "Status TKT-1001?", "tickets": context},
+                headers=self.headers,
+            )
+            self.assertEqual(result.status_code, 200)
+            self.assertEqual(result.json()["route"], route)
+            if route == "ticket":
+                self.assertEqual(result.json()["ticket"]["summary"], "Authorized DB record")
+        # The shared agent fixture was not mutated by either request.
+        result = self.client.post(
+            "/agent/respond", json={"message": "Status TKT-1001?"}, headers=self.headers
+        )
+        self.assertEqual(result.json()["ticket"]["status"], "open")
+
+    def test_invalid_ticket_context_is_rejected(self):
+        for tickets in [None, {}, [{"id": "TKT-1001", "status": "root", "summary": "x"}]]:
+            result = self.client.post(
+                "/agent/respond",
+                json={"message": "Status TKT-1001?", "tickets": tickets},
+                headers=self.headers,
+            )
+            self.assertEqual(result.status_code, 422)
+
     def test_auth_and_input_validation(self):
         self.assertEqual(
             self.client.post("/agent/respond", json={"message": "backups"}).status_code, 401

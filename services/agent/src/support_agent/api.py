@@ -13,16 +13,42 @@ from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from support_agent.models import Answer
+from support_agent.agent import Agent
+from support_agent.models import Answer, Ticket
 from support_agent.runtime import Runtime, Settings, build_runtime
 
 LOGGER = logging.getLogger("support_agent.requests")
 AUTH = HTTPBearer(auto_error=False)
 
 
+class TicketContext(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True)
+    id: str = Field(pattern=r"^TKT-[0-9]{4}$")
+    status: str = Field(pattern=r"^(open|in_progress|resolved)$")
+    summary: str = Field(min_length=1, max_length=200)
+
+
+class ScopedTickets:
+    """Only the trusted API's already authorized relational ticket snapshot."""
+
+    def __init__(self, tickets: list[TicketContext]):
+        self.tickets = {ticket.id: Ticket(**ticket.model_dump()) for ticket in tickets}
+
+    def get(self, ticket_id: str) -> Ticket | None:
+        return self.tickets.get(ticket_id)
+
+
 class MessageRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
     message: str = Field(min_length=1, max_length=4000)
+    tickets: list[TicketContext] | None = Field(default=None, max_length=1000)
+
+    @field_validator("tickets", mode="before")
+    @classmethod
+    def explicit_context(cls, value):
+        if value is None:
+            raise ValueError("Explicit ticket context must be a list")
+        return value
 
     @field_validator("message")
     @classmethod
@@ -74,7 +100,10 @@ def create_app(runtime: Runtime | None = None, service_token: str | None = None)
 
     @app.post("/agent/respond", response_model=Answer, dependencies=[Depends(authorize)])
     def respond(body: MessageRequest) -> Answer:
-        return resolved.agent.respond(body.message)
+        if body.tickets is None:
+            return resolved.agent.respond(body.message)
+        scoped = Agent(resolved.agent.index, resolved.agent.selector, ScopedTickets(body.tickets))
+        return scoped.respond(body.message)
 
     @app.get("/health/live")
     def live() -> dict[str, str]:
