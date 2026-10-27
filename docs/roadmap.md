@@ -66,6 +66,6 @@ no mock final demo path; no paid services or cloud provisioning.
 - [ ] Validate documented setup from a clean checkout; capture real screenshots,
   measured evaluation results, demo script, trade-offs, and limitations.
 
-At each gate update `docs/progress.md` with files, exact commands and observed
-results. When blocked, continue independent work within that milestone, record
-the failed attempts and exact recovery action, and leave its gate unchecked.
+At each gate update this checklist and the README with verified status and
+remaining limitations. When blocked, leave the gate unchecked and document what
+is required to complete it.

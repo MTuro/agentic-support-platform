@@ -6,7 +6,7 @@ passing core tests; its HTTP, real Chroma/PDF and live Ollama acceptance checks
 are **not yet verified**. M2–M6 remain pending behind that gate.
 
 [Architecture and contracts](docs/architecture.md) · [Decisions](docs/decisions.md) ·
-[Checklist](docs/roadmap.md) · [Actual commands/results and blockers](docs/progress.md)
+[Checklist](docs/roadmap.md)
 
 The M1 service routes between versioned knowledge retrieval, synthetic ticket
 status, and an explicit escalation decision. Chroma stores vector chunks; Ollama
