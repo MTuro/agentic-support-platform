@@ -5,8 +5,13 @@ from typing import Literal, Protocol
 
 Route = Literal["rag", "ticket", "escalation"]
 Reason = Literal[
-    "no_evidence", "dependency_unavailable", "unsafe_request", "human_requested",
-    "ticket_not_found", "invalid_ticket", "unsupported_generation",
+    "no_evidence",
+    "dependency_unavailable",
+    "unsafe_request",
+    "human_requested",
+    "ticket_not_found",
+    "invalid_ticket",
+    "unsupported_generation",
 ]
 
 

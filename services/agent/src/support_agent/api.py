@@ -48,23 +48,31 @@ def create_app(runtime: Runtime | None = None, service_token: str | None = None)
         started = time.monotonic()
         response = await call_next(request)
         response.headers["X-Request-ID"] = request_id
-        LOGGER.info(json.dumps({
-            "event": "http.completed", "request_id": request_id,
-            "status": response.status_code,
-            "duration_ms": round((time.monotonic() - started) * 1000, 2),
-        }))
+        LOGGER.info(
+            json.dumps(
+                {
+                    "event": "http.completed",
+                    "request_id": request_id,
+                    "status": response.status_code,
+                    "duration_ms": round((time.monotonic() - started) * 1000, 2),
+                }
+            )
+        )
         return response
 
-    def authorize(credentials: Annotated[
-        HTTPAuthorizationCredentials | None, Depends(AUTH),
-    ]) -> None:
+    def authorize(
+        credentials: Annotated[
+            HTTPAuthorizationCredentials | None,
+            Depends(AUTH),
+        ],
+    ) -> None:
         supplied = credentials.credentials if credentials else ""
         if not secrets.compare_digest(supplied.encode(), token.encode()):
-            raise HTTPException(status_code=401, detail="Unauthorized",
-                                headers={"WWW-Authenticate": "Bearer"})
+            raise HTTPException(
+                status_code=401, detail="Unauthorized", headers={"WWW-Authenticate": "Bearer"}
+            )
 
-    @app.post("/agent/respond", response_model=Answer,
-              dependencies=[Depends(authorize)])
+    @app.post("/agent/respond", response_model=Answer, dependencies=[Depends(authorize)])
     def respond(body: MessageRequest) -> Answer:
         return resolved.agent.respond(body.message)
 
@@ -78,7 +86,9 @@ def create_app(runtime: Runtime | None = None, service_token: str | None = None)
             available = resolved.ready()
         except Exception:
             available = False
-        return JSONResponse({"status": "ready" if available else "unavailable"},
-                            status_code=200 if available else 503)
+        return JSONResponse(
+            {"status": "ready" if available else "unavailable"},
+            status_code=200 if available else 503,
+        )
 
     return app

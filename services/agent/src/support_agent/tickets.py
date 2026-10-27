@@ -16,14 +16,16 @@ class JsonTickets:
             raise ValueError("Ticket seed must be a list")
         self._tickets: dict[str, Ticket] = {}
         for record in records:
-            if (not isinstance(record, dict)
-                    or set(record) != {"id", "status", "summary"}
-                    or not isinstance(record["id"], str)
-                    or not TICKET_ID.fullmatch(record["id"])
-                    or record["status"] not in ("open", "in_progress", "resolved")
-                    or not isinstance(record["summary"], str)
-                    or not 1 <= len(record["summary"]) <= 200
-                    or record["id"] in self._tickets):
+            if (
+                not isinstance(record, dict)
+                or set(record) != {"id", "status", "summary"}
+                or not isinstance(record["id"], str)
+                or not TICKET_ID.fullmatch(record["id"])
+                or record["status"] not in ("open", "in_progress", "resolved")
+                or not isinstance(record["summary"], str)
+                or not 1 <= len(record["summary"]) <= 200
+                or record["id"] in self._tickets
+            ):
                 raise ValueError("Invalid or duplicate synthetic ticket")
             self._tickets[record["id"]] = Ticket(**record)
 

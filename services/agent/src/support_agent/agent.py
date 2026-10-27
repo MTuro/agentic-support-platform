@@ -3,7 +3,12 @@
 import re
 
 from support_agent.models import (
-    Answer, Citation, QuoteSelector, Reason, SearchIndex, TicketStore,
+    Answer,
+    Citation,
+    QuoteSelector,
+    Reason,
+    SearchIndex,
+    TicketStore,
 )
 from support_agent.retrieval import relevant_hits, terms
 
@@ -19,7 +24,9 @@ TICKET = re.compile(r"(?<!\w)TKT-\d{4}(?!\w)", re.IGNORECASE)
 def escalate(reason: Reason) -> Answer:
     return Answer(
         answer="I cannot confidently answer this request. Please contact a human support agent.",
-        route="escalation", escalated=True, reason=reason,
+        route="escalation",
+        escalated=True,
+        reason=reason,
     )
 
 
@@ -48,7 +55,8 @@ class Agent:
                 return escalate("ticket_not_found")
             return Answer(
                 answer=f"{ticket.id} is {ticket.status}: {ticket.summary}",
-                route="ticket", ticket=ticket,
+                route="ticket",
+                ticket=ticket,
             )
         try:
             hits = relevant_hits(message, self.index.search(message))
@@ -60,14 +68,24 @@ class Agent:
         for hit in hits:
             chunk = hit.chunk
             quote = selection.quote.strip()
-            if (selection.chunk_id == chunk.chunk_id and 12 <= len(quote) <= 1200
-                    and quote in chunk.text and terms(message).intersection(terms(quote))):
+            if (
+                selection.chunk_id == chunk.chunk_id
+                and 12 <= len(quote) <= 1200
+                and quote in chunk.text
+                and terms(message).intersection(terms(quote))
+            ):
                 return Answer(
-                    answer=quote, route="rag",
-                    citations=(Citation(
-                        document_id=chunk.document_id, version=chunk.version,
-                        chunk_id=chunk.chunk_id, title=chunk.title,
-                        source=chunk.source, quote=quote,
-                    ),),
+                    answer=quote,
+                    route="rag",
+                    citations=(
+                        Citation(
+                            document_id=chunk.document_id,
+                            version=chunk.version,
+                            chunk_id=chunk.chunk_id,
+                            title=chunk.title,
+                            source=chunk.source,
+                            quote=quote,
+                        ),
+                    ),
                 )
         return escalate("unsupported_generation")

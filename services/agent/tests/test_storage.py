@@ -48,11 +48,16 @@ class StorageTests(unittest.TestCase):
             sources.mkdir()
             writer = PdfWriter()
             page = writer.add_blank_page(width=612, height=792)
-            font = DictionaryObject({NameObject("/Type"): NameObject("/Font"),
-                                     NameObject("/Subtype"): NameObject("/Type1"),
-                                     NameObject("/BaseFont"): NameObject("/Helvetica")})
-            page[NameObject("/Resources")] = DictionaryObject({
-                NameObject("/Font"): DictionaryObject({NameObject("/F1"): font})})
+            font = DictionaryObject(
+                {
+                    NameObject("/Type"): NameObject("/Font"),
+                    NameObject("/Subtype"): NameObject("/Type1"),
+                    NameObject("/BaseFont"): NameObject("/Helvetica"),
+                }
+            )
+            page[NameObject("/Resources")] = DictionaryObject(
+                {NameObject("/Font"): DictionaryObject({NameObject("/F1"): font})}
+            )
             stream = DecodedStreamObject()
             stream.set_data(b"BT /F1 12 Tf 72 720 Td (Daily backups last 30 days.) Tj ET")
             page[NameObject("/Contents")] = stream

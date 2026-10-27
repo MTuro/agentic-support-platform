@@ -43,8 +43,10 @@ class Runtime:
 
 def build_index(settings: Settings) -> tuple[ChromaIndex, Ollama]:
     ollama = Ollama(
-        base_url=settings.ollama_url, model=settings.ollama_model,
-        embedding_model=settings.embedding_model, timeout=settings.ollama_timeout,
+        base_url=settings.ollama_url,
+        model=settings.ollama_model,
+        embedding_model=settings.embedding_model,
+        timeout=settings.ollama_timeout,
     )
     return ChromaIndex.open(settings.chroma_dir, ollama, settings.embedding_model), ollama
 

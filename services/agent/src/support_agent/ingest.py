@@ -11,22 +11,31 @@ MAX_EXTRACTED_CHARS = 2_000_000
 
 
 def chunk_document(
-    document_id: str, text: str, version: str, size: int = 1000,
+    document_id: str,
+    text: str,
+    version: str,
+    size: int = 1000,
 ) -> list[Chunk]:
     if not 1 <= size <= 1000:
         raise ValueError("Chunk size must be between 1 and 1000")
     if not text.strip():
         return []
-    title = next((line.lstrip("# ") for line in text.splitlines() if line.strip()),
-                 document_id)[:120]
+    title = next((line.lstrip("# ") for line in text.splitlines() if line.strip()), document_id)[
+        :120
+    ]
     chunks = []
     for offset in range(0, len(text), size):
         chunk_id = hashlib.sha256(f"{document_id}\0{version}\0{offset}".encode()).hexdigest()
-        chunks.append(Chunk(
-            document_id=document_id, version=version, chunk_id=chunk_id,
-            title=title, source="kb://" + quote(document_id, safe="/"),
-            text=text[offset:offset + size],
-        ))
+        chunks.append(
+            Chunk(
+                document_id=document_id,
+                version=version,
+                chunk_id=chunk_id,
+                title=title,
+                source="kb://" + quote(document_id, safe="/"),
+                text=text[offset : offset + size],
+            )
+        )
     return chunks
 
 

@@ -17,11 +17,16 @@ class Collection:
         self.fail = False
 
     def get(self, *, include, where=None):
-        records = [(key, value) for key, value in self.records.items()
-                   if where is None or value[1]["document_id"] == where["document_id"]]
-        return {"ids": [key for key, _ in records],
-                "documents": [v[0] for _, v in records],
-                "metadatas": [v[1] for _, v in records]}
+        records = [
+            (key, value)
+            for key, value in self.records.items()
+            if where is None or value[1]["document_id"] == where["document_id"]
+        ]
+        return {
+            "ids": [key for key, _ in records],
+            "documents": [v[0] for _, v in records],
+            "metadatas": [v[1] for _, v in records],
+        }
 
     def upsert(self, *, ids, documents, metadatas, embeddings):
         if self.fail:
@@ -40,7 +45,8 @@ class Collection:
     def query(self, *, query_embeddings, n_results, include):
         result = self.get(include=[])
         return {key: [value[:n_results]] for key, value in result.items()} | {
-            "distances": [[0.1] * min(n_results, self.count())]}
+            "distances": [[0.1] * min(n_results, self.count())]
+        }
 
 
 class ChromaTests(unittest.TestCase):

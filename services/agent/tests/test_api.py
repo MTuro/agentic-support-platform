@@ -20,8 +20,19 @@ TOKEN = "test-only-service-token-32-characters"
 
 class Search:
     def search(self, question):
-        return [Hit(Chunk("backups.md", "v1", "backup", "Backups", "kb://backups.md",
-                          "OrbitDesk retains daily backups for 30 days."), 0.1)]
+        return [
+            Hit(
+                Chunk(
+                    "backups.md",
+                    "v1",
+                    "backup",
+                    "Backups",
+                    "kb://backups.md",
+                    "OrbitDesk retains daily backups for 30 days.",
+                ),
+                0.1,
+            )
+        ]
 
 
 class Selector:
@@ -34,18 +45,21 @@ class ApiTests(unittest.TestCase):
         self.directory = TemporaryDirectory()
         self.addCleanup(self.directory.cleanup)
         path = Path(self.directory.name) / "tickets.json"
-        path.write_text(json.dumps([
-            {"id": "TKT-1001", "status": "open", "summary": "Synthetic export issue"}
-        ]))
+        path.write_text(
+            json.dumps([{"id": "TKT-1001", "status": "open", "summary": "Synthetic export issue"}])
+        )
         self.runtime = Runtime(Agent(Search(), Selector(), JsonTickets(path)), lambda: True)
         self.client = TestClient(create_app(self.runtime, TOKEN))
         self.headers = {"Authorization": "Bearer " + TOKEN}
 
     def test_faq_and_ticket_contracts(self):
-        for question, route in [("How long are backups retained?", "rag"),
-                                ("Status of TKT-1001?", "ticket")]:
-            result = self.client.post("/agent/respond", json={"message": question},
-                                      headers=self.headers)
+        for question, route in [
+            ("How long are backups retained?", "rag"),
+            ("Status of TKT-1001?", "ticket"),
+        ]:
+            result = self.client.post(
+                "/agent/respond", json={"message": question}, headers=self.headers
+            )
             self.assertEqual(result.status_code, 200)
             body = result.json()
             self.assertEqual(body["route"], route)
@@ -56,14 +70,22 @@ class ApiTests(unittest.TestCase):
                 self.assertEqual(body["ticket"]["status"], "open")
 
     def test_auth_and_input_validation(self):
-        self.assertEqual(self.client.post("/agent/respond", json={"message": "backups"})
-                         .status_code, 401)
+        self.assertEqual(
+            self.client.post("/agent/respond", json={"message": "backups"}).status_code, 401
+        )
         for message in ["", "   ", "x" * 4001, 123, None]:
-            self.assertEqual(self.client.post("/agent/respond", json={"message": message},
-                                              headers=self.headers).status_code, 422)
-        self.assertEqual(self.client.post("/agent/respond",
-                                          json={"message": "backups", "admin": True},
-                                          headers=self.headers).status_code, 422)
+            self.assertEqual(
+                self.client.post(
+                    "/agent/respond", json={"message": message}, headers=self.headers
+                ).status_code,
+                422,
+            )
+        self.assertEqual(
+            self.client.post(
+                "/agent/respond", json={"message": "backups", "admin": True}, headers=self.headers
+            ).status_code,
+            422,
+        )
 
     def test_readiness_and_liveness_have_distinct_status(self):
         self.runtime.ready = lambda: False
@@ -74,8 +96,9 @@ class ApiTests(unittest.TestCase):
         request_id = str(uuid4())
         headers = self.headers | {"X-Request-ID": request_id}
         with self.assertLogs("support_agent.requests", logging.INFO) as logs:
-            result = self.client.post("/agent/respond", json={"message": "private backups"},
-                                      headers=headers)
+            result = self.client.post(
+                "/agent/respond", json={"message": "private backups"}, headers=headers
+            )
         self.assertEqual(result.headers["X-Request-ID"], request_id)
         serialized = " ".join(logs.output)
         self.assertNotIn("private backups", serialized)
@@ -88,9 +111,11 @@ class ApiTests(unittest.TestCase):
         class Broken:
             def search(self, question):
                 raise RuntimeError("secret dependency detail")
+
         self.runtime.agent.index = Broken()
-        result = self.client.post("/agent/respond", json={"message": "backups"},
-                                  headers=self.headers)
+        result = self.client.post(
+            "/agent/respond", json={"message": "backups"}, headers=self.headers
+        )
         self.assertEqual(result.status_code, 200)
         self.assertTrue(result.json()["escalated"])
         self.assertEqual(result.json()["reason"], "dependency_unavailable")
