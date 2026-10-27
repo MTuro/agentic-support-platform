@@ -1,9 +1,9 @@
 # OrbitDesk support platform
 
 Implementation of [the supplied plan](CODEX_AI_CUSTOMER_SUPPORT_PLAN.md), using
-synthetic SaaS support content. M0 is complete. M1 agent code has passing core,
-FastAPI contract, and real Chroma/PDF tests. Its live Ollama/HTTP acceptance
-checks are **not yet verified**. M2–M6 remain pending behind that gate.
+synthetic SaaS support content. M0 and M1 are complete: 41 tests and nine
+subtests pass, along with lint, type checking and six real Ollama/HTTP smoke
+cases (zero failures). M2–M6 remain pending.
 
 [Architecture and contracts](docs/architecture.md) · [Decisions](docs/decisions.md) ·
 [Checklist](docs/roadmap.md)

@@ -27,7 +27,7 @@ no mock final demo path; no paid services or cloud provisioning.
 - [x] Run `test_api.py` against the real FastAPI boundary using TestClient with injected
   domain dependencies, plus `test_storage.py` with real Chroma/PDF. These tests are
   passing: six API contract tests and two storage integration tests.
-- [ ] Run `make test-core`, `make test`, `make lint`, `make typecheck`, and live
+- [x] Run `make test-core`, `make test`, `make lint`, `make typecheck`, and live
   `make ingest` / `make smoke-agent` with real Chroma/Ollama. M1 is complete only
   when API tests and a grounded FAQ plus synthetic ticket HTTP request pass.
 
