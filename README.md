@@ -1,9 +1,9 @@
 # OrbitDesk support platform
 
 Implementation of [the supplied plan](CODEX_AI_CUSTOMER_SUPPORT_PLAN.md), using
-synthetic SaaS support content. M0 is complete. M1 agent code is implemented with
-passing core tests; its HTTP, real Chroma/PDF and live Ollama acceptance checks
-are **not yet verified**. M2–M6 remain pending behind that gate.
+synthetic SaaS support content. M0 is complete. M1 agent code has passing core,
+FastAPI contract, and real Chroma/PDF tests. Its live Ollama/HTTP acceptance
+checks are **not yet verified**. M2–M6 remain pending behind that gate.
 
 [Architecture and contracts](docs/architecture.md) · [Decisions](docs/decisions.md) ·
 [Checklist](docs/roadmap.md)
@@ -93,10 +93,9 @@ chunking, sync behavior and adapter logic. They do **not** prove third-party
 integration. `make test` requires pytest, FastAPI/httpx, Chroma and pypdf and does
 not skip unavailable integrations. `make lint`/`make typecheck` require ruff/mypy.
 
-The implementation host has Python 3.14.8, no dependencies or Ollama, and cannot
-resolve PyPI. After network/package access is restored, run the setup and complete
-all M1 checks above before proceeding to M2. Do not replace these services with
-mock APIs to satisfy the acceptance gate.
+Full acceptance requires local service access and the installed Ollama models.
+Complete all M1 checks above before proceeding to M2. Do not replace these
+services with mock APIs to satisfy the acceptance gate.
 
 ## Trade-offs and remaining scope
 

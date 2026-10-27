@@ -24,9 +24,9 @@ no mock final demo path; no paid services or cloud provisioning.
 - [x] Test timeout/retry/invalid Ollama output in `test_core_ollama.py` before implementing
   `ollama.py`. Use deterministic transport doubles only in tests.
 - [x] Implement `api.py`, dependency wiring in `runtime.py`, and explicit ingest CLI.
-- [ ] Run `test_api.py` against the real FastAPI boundary using TestClient with injected
+- [x] Run `test_api.py` against the real FastAPI boundary using TestClient with injected
   domain dependencies, plus `test_storage.py` with real Chroma/PDF. These tests are
-  written but cannot import missing packages; no dependency skips in the full target.
+  passing: six API contract tests and two storage integration tests.
 - [ ] Run `make test-core`, `make test`, `make lint`, `make typecheck`, and live
   `make ingest` / `make smoke-agent` with real Chroma/Ollama. M1 is complete only
   when API tests and a grounded FAQ plus synthetic ticket HTTP request pass.
